@@ -5,7 +5,7 @@ from flask import request, jsonify
 
 # create app object
 app = FlaskAPI(__name__)
-app.config['DEBUG'] = True
+# app.config['DEBUG'] = True
 
 # open save file
 with open('factorial_dict.json', 'r+') as f:
@@ -29,7 +29,7 @@ def factorial(n):
     return(n*factorial(n-1))
 
 # homepage
-@app.route('/', methods=['GET'])
+@app.route('/')
 def home():
     home = {}
     home["/"] = 'homepage'
@@ -38,12 +38,12 @@ def home():
     return home
 
 # displays
-@app.route('/database', methods=['GET'])
+@app.route('/database')
 def factorial_database():
     return numericalSort(data)
 
 # adds n! to database
-@app.route('/factorial/<int:n>', methods=['GET'])
+@app.route('/factorial/<int:n>')
 def n_factorial(n):
     try:
         type(data[str(n)])
@@ -53,5 +53,10 @@ def n_factorial(n):
             f.write(str(json.dumps(numericalSort(data), indent=2)))
     return {f"{n}": f"{data[str(n)]}"}
 
+# 404
+@app.errorhandler(404)
+def page_not_found(error):
+    return '<h1>LOLZ!</h1> This page does not exist!', 404
+
 # run app
-app.run()
+app.run(host="0.0.0.0")
